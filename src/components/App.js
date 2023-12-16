@@ -8,6 +8,10 @@ import Questions from './Questions';
 import NextButton from './NextButton';
 import Progress from './Progress';
 import FinishScreen from './FinishScreen';
+import Timer from './Timer';
+import Footer from './Footer';
+
+const SECS_PER_QUESTION = 30;
 
 const initialState = {
   // 'loading', 'error', 'ready', 'active', 'finished'
@@ -16,6 +20,7 @@ const initialState = {
   index: 0,
   answer: null,
   points: 0,
+  remainingSeconds: null,
 };
 
 function reducer(state, action) {
@@ -34,6 +39,7 @@ function reducer(state, action) {
       return {
         ...state,
         status: 'active',
+        remainingSeconds: state.questions.length * SECS_PER_QUESTION,
       };
 
     case 'answered':
@@ -51,6 +57,10 @@ function reducer(state, action) {
     case 'nextQuestion':
       return { ...state, index: state.index + 1, answer: null };
 
+    case 'timer':
+      if (state.remainingSeconds === 0) return { ...state, status: 'finished' };
+      return { ...state, remainingSeconds: state.remainingSeconds - 1 };
+
     case 'finish':
       return { ...state, status: 'finished' };
 
@@ -63,10 +73,10 @@ function reducer(state, action) {
 }
 
 export default function App() {
-  const [{ status, questions, index, answer, points }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [
+    { status, questions, index, answer, points, remainingSeconds },
+    dispatch,
+  ] = useReducer(reducer, initialState);
 
   const questionsNum = questions.length;
   const sumPoints = questions.reduce((acc, curr) => acc + curr.points, 0);
@@ -102,13 +112,15 @@ export default function App() {
               dispatch={dispatch}
               answer={answer}
             />
-
-            <NextButton
-              answer={answer}
-              dispatch={dispatch}
-              index={index}
-              questionsNum={questionsNum}
-            />
+            <Footer>
+              <Timer remainingSeconds={remainingSeconds} dispatch={dispatch} />
+              <NextButton
+                answer={answer}
+                dispatch={dispatch}
+                index={index}
+                questionsNum={questionsNum}
+              />
+            </Footer>
           </>
         )}
 
