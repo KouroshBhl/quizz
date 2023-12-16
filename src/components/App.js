@@ -54,8 +54,11 @@ function reducer(state, action) {
     case 'finish':
       return { ...state, status: 'finished' };
 
+    case 'resetQuiz':
+      return { ...state, status: 'ready', index: 0, answer: null, points: 0 };
+
     default:
-      break;
+      throw new Error('uncaught status');
   }
 }
 
@@ -110,7 +113,11 @@ export default function App() {
         )}
 
         {status === 'finished' && (
-          <FinishScreen sumPoints={sumPoints} points={points} />
+          <FinishScreen
+            sumPoints={sumPoints}
+            points={points}
+            dispatch={dispatch}
+          />
         )}
       </Main>
     </div>

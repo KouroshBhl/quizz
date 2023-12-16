@@ -1,4 +1,4 @@
-function FinishScreen({ sumPoints, points }) {
+function FinishScreen({ sumPoints, points, dispatch }) {
   const percentage = (points / sumPoints) * 100;
 
   let emoji;
@@ -15,7 +15,12 @@ function FinishScreen({ sumPoints, points }) {
         {sumPoints} ({Math.ceil(percentage)}%)
       </p>
 
-      <button className='btn btn-ui'></button>
+      <button
+        className='btn btn-ui'
+        onClick={() => dispatch({ type: 'resetQuiz' })}
+      >
+        Reset Quiz
+      </button>
     </>
   );
 }
